@@ -1,8 +1,8 @@
 fs = 16000;
 t = [0:1/fs:2];
-sig = sin(2*pi*1500*t);
+sig = sin(2*pi*1500*t) + 1;
 [simin,nbsecs,fs] = initparams(sig,fs);
-dftsize = 512;
+dftsize = 1024;
 sim('recplay');
 out = simout.signals.values;
 figure();
