@@ -11,7 +11,7 @@ small = true;
 while small
     if out(i) > threshold
         small = false;
-        y = out(i:i+size(u,2)+200);
+        y = out(i-50:i+size(u,2)+200);
     end
     i = i + 1;
 end
