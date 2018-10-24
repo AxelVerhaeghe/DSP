@@ -1,9 +1,9 @@
 fs = 16000;
 t = 0:1/fs:2;
 dc = 0.25;
-% sig = sin(2*pi*1500*t) + dc;
+sig = sin(2*pi*1500*t) + dc;
 % sig = sin(2*pi*100*t) + sin(2*pi*200*t) + sin(2*pi*500*t) + sin(2*pi*1000*t) + sin(2*pi*1500*t) + sin(2*pi*2000*t) + sin(2*pi*4000*t) + sin(2*pi*6000*t);
-sig = wgn(1,2*fs,1);
+% sig = wgn(1,2*fs,1);
 [simin,nbsecs,fs] = initparams(sig,fs);
 dftsize = 1024;
 sim('recplay');
