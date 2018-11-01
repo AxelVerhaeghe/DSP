@@ -1,0 +1,11 @@
+function y = qam_mod(dataIn,n)
+    M = 2^n;
+    dataInMatrix = reshape(dataIn,[],n);
+    dataSymbolsIn = bi2de(dataInMatrix);
+    % 
+    yNotNormalized = qammod(dataSymbolsIn,M);
+    avgPower = mean(abs(yNotNormalized).^2);
+    fprintf(1,"Normalisation factor = %d\n",1/avgPower);
+    
+    y = qammod(dataSymbolsIn,M,'UnitAveragePower',true);
+end

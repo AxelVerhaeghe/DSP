@@ -1,0 +1,40 @@
+clear();
+len = 1800;
+input = randi([0,1],1,len);
+snr = 10;
+
+% 4-QAM
+qam2 = qam_mod(input,2); %Modulating the signal without noise (4-QAM)
+qam2Noise = awgn(qam2,snr); %Adding noise to the modulated signal
+scatterplot(qam2,1,0,'k+'); %Scatterplot of the signal without noise
+scatterplot(qam2Noise,1,0,'k+'); %Scatterplot of the signal with noise
+output2 = qam_demod(qam2Noise,2); %Demodulating the noisy transmitted signal
+ber2 = ber(input,output2);
+fprintf(1,"BER for 4-QAM and SNR of %d = %.d\n",snr,ber2);
+
+% 8-QAM
+qam3 = qam_mod(input,3); %Modulating the signal without noise (8-QAM)
+qam3Noise = awgn(qam3,snr); %Adding noise to the modulated signal
+scatterplot(qam3,1,0,'g+'); %Scatterplot of the signal without noise
+scatterplot(qam3Noise,1,0,'g+'); %Scatterplot of the signal with noise
+output3 = qam_demod(qam3Noise,3); %Demodulating the noisy transmitted signal
+ber3 = ber(input,output3);
+fprintf(1,"BER for 8-QAM and SNR of %d = %d\n",snr,ber3);
+
+% 16-QAM
+qam4 = qam_mod(input,4); %Modulating the signal without noise (16-QAM)
+qam4Noise = awgn(qam4,snr); %Adding noise to the modulated signal
+scatterplot(qam4,1,0,'b+'); %Scatterplot of the signal without noise
+scatterplot(qam4Noise,1,0,'b+');
+output4 = qam_demod(qam4Noise,4); %Demodulating the noisy transmitted signal
+ber4 = ber(input,output4);
+fprintf(1,"BER for 16-QAM and SNR of %d = %d\n",snr,ber4);
+
+% 64-QAM
+qam6 = qam_mod(input,6); %Modulating the signal without noise (64-QAM)
+qam6Noise = awgn(qam6,snr); %Adding noise to the modulated signal
+scatterplot(qam6,1,0,'r+'); %Scatterplot of the signal without noise
+scatterplot(qam6Noise,1,0,'r+'); %Scatterplot of the signal with noise
+output6 = qam_demod(qam6Noise,6); %Demodulating the noisy transmitted signal
+ber6 = ber(input,output6);
+fprintf(1,"BER for 64-QAM and SNR of %d = %d\n",snr,ber6);

@@ -1,0 +1,8 @@
+function y = qam_demod(signal,n);
+    M = 2^n;
+    
+    demodSig = qamdemod(signal,M);
+    binDemodSig = de2bi(demodSig);
+    y = reshape(binDemodSig,1,
+    
+end
