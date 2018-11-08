@@ -24,6 +24,7 @@ X = toeplitz(c,r);
 h = X\y;
 H = fft(h);
 magH = mag2db(abs(H));
+save('IR2.mat','h');
 
 figure();
 subplot(2,1,1) %% plot of time domain impulse response

@@ -1,0 +1,14 @@
+function y = ofdm_demod(signal,qamBlockSize,prefixLength, paddingSize,channelFreqResp)
+%OFDM_DEMOD demodulates the input OFDM signal back to an QAM signal.
+
+    frameSize = 2*qamBlockSize + 2 + prefixLength;
+    withPrefixTime = reshape(signal,frameSize,[]);
+    withoutPrefixTime = withPrefixTime(prefixLength+1:frameSize,:);
+    withoutPrefix = fft(withoutPrefixTime);
+    channelResp
+    withoutPrefixScaled = diag(1./channelResp)*withoutPrefix;
+    
+    qamParallel = withoutPrefixScaled(2:qamBlockSize+1,:);
+    y = reshape(qamParallel,1,[]);
+    y = y(1:length(y)-paddingSize);
+end
