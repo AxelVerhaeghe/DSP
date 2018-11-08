@@ -1,4 +1,4 @@
-function ofdm = ofdm_mod(qamSignal,dftSize,L)
+function [ofdm,paddingSize] = ofdm_mod(qamSignal,qamBlockSize,prefixLength)
 %OFDM_MOD applies a OFDM to the given QAM input signal.
 %Input arguments:
 % - qamSignal    The input signal modulated with QAM
@@ -7,12 +7,24 @@ function ofdm = ofdm_mod(qamSignal,dftSize,L)
 
     qamSignal = transpose(qamSignal);
     signalLength   = length(qamSignal);
-    frameLength  = 2*dftSize+2;
-    numFrames = ceil(signalLength/dftSize);
+    frameLength  = 2*qamBlockSize+2;
+    paddingSize = 0;
     
-    parallel = reshape(qamSignal,dftSize,numFrames);
+    % padding input with zeros
+    remainder = mod(signalLength,qamBlockSize);
+    while(remainder ~= 0)
+       qamSignal = cat(2,qamSignal,0);
+       signalLength = signalLength + 1;
+       remainder = mod(signalLength,qamBlockSize);
+       paddingSize = paddingSize + 1;
+    end
+    numFrames = signalLength/qamBlockSize;
+%     paddedQamSignal = zeros(1,numFrames*dftSize);
+%     paddedQamSignal(1:length(qamSignal)) = qamSignal;
+    
+    parallel = reshape(qamSignal,qamBlockSize,numFrames);
     without_pre = [zeros(1,numFrames);parallel;zeros(1,numFrames);flipud(conj(parallel))];
     without_pre_time = ifft(without_pre); %apply ifft
-    ofdm = [without_pre_time(frameLength-L+1:frameLength,:);without_pre_time]; %add cyclic prefix of length L
+    ofdm = [without_pre_time(frameLength-prefixLength+1:frameLength,:);without_pre_time]; %add cyclic prefix of length L
     ofdm = ofdm(:).'; %reshapes the array into a column vector and then applies transpose
 end

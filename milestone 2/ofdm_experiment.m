@@ -1,11 +1,18 @@
 clear();
-len = 18000;
-dftSize = 50;
+len = 1800;
+qamBlockSize = 50;
 input = randi([0,1],1,len);
-qam6 = qam_mod(input,6); %Modulating the signal without noise (64-QAM)
-ofdm = ofdm_mod(qam6,dftSize,10); %Applying OFDM on the input signal
-output = ofdm_demod(ofdm,dftSize,10); %Demodulating the OFDM signal to the QAM signal
-ber = ber(qam6,output); %Checking if the output is the same as  the input
-% Since there is no added noise, these should be equal and thus the BER
-% should be 0%
+n=5;
+prefixLength = 10;
+snr= 20;
+qam = qam_mod(input,n); %Modulating the signal without noise
+[ofdm,paddingSize] = ofdm_mod(qam,qamBlockSize,prefixLength); %Applying OFDM on the input signal
+ofdmWithNoise = awgn(ofdm,snr,'measured'); %Adding noise to OFDM
+
+output = ofdm_demod(ofdmWithNoise,qamBlockSize,prefixLength,paddingSize); %Demodulating the OFDM signal to the QAM signal
+outputBit = qam_demod(output,n); %Demodulating the output QAM signal
+ber = ber(input,outputBit); %Checking the BER
 fprintf(1,"BER = %f%%\n",100*ber);
+
+R = (n*qamBlockSize)/(2*qamBlockSize + 2); %Calculating the data rate in function of sampling frequency
+fprintf(1,"Data Rate R = %f * fs\n",R);

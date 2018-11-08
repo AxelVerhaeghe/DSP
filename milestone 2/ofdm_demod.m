@@ -1,9 +1,9 @@
-function y = ofdm_demod(signal,dftSize,L)
-frameSize = 2*dftSize + 2 + L;
-numFrames = length(signal)/frameSize;
-with_prefix_time = reshape(signal,frameSize,[]);
-without_prefix_time = with_prefix_time(L+1:frameSize,:);
-without_prefix = fft(without_prefix_time);
-qamParallel = without_prefix(2:dftSize+1,:);
-y = reshape(qamParallel,1,[]);
+function y = ofdm_demod(signal,qamBlockSize,prefixLength, paddingSize)
+    frameSize = 2*qamBlockSize + 2 + prefixLength;
+    with_prefix_time = reshape(signal,frameSize,[]);
+    without_prefix_time = with_prefix_time(prefixLength+1:frameSize,:);
+    without_prefix = fft(without_prefix_time);
+    qamParallel = without_prefix(2:qamBlockSize+1,:);
+    y = reshape(qamParallel,1,[]);
+    y = y(1:length(y)-paddingSize);
 end

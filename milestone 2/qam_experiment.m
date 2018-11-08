@@ -6,8 +6,8 @@ snr2 = 20;
 
 %% 4-QAM
 qam2 = qam_mod(input,2); %Modulating the signal without noise (4-QAM)
-qam2Noise1 = awgn(qam2,snr1); %Adding noise to the modulated signal
-qam2Noise2 = awgn(qam2,snr2);
+qam2Noise1 = awgn(qam2,snr1,'measured'); %Adding noise to the modulated signal
+qam2Noise2 = awgn(qam2,snr2,'measured');
 scatterplot(qam2,1,0,'k+'); %Scatterplot of the signal without noise
 scatterplot(qam2Noise1,1,0,'k+'); %Scatterplot of the signal with noise
 scatterplot(qam2Noise2,1,0,'k+'); %Scatterplot of the signal with noise
@@ -20,8 +20,8 @@ fprintf(1,"BER for 4-QAM and SNR of %d = %f%%\n",snr2,100*ber22);
 
 %% 8-QAM
 qam3 = qam_mod(input,3); %Modulating the signal without noise (4-QAM)
-qam3Noise1 = awgn(qam3,snr1); %Adding noise to the modulated signal
-qam3Noise2 = awgn(qam3,snr2);
+qam3Noise1 = awgn(qam3,snr1,'measured'); %Adding noise to the modulated signal
+qam3Noise2 = awgn(qam3,snr2,'measured');
 scatterplot(qam3,1,0,'b+'); %Scatterplot of the signal without noise
 scatterplot(qam3Noise1,1,0,'b+'); %Scatterplot of the signal with noise
 scatterplot(qam3Noise2,1,0,'b+'); %Scatterplot of the signal with noise
@@ -34,8 +34,8 @@ fprintf(1,"BER for 8-QAM and SNR of %d = %f%%\n",snr2,100*ber32);
 
 %% 16-QAM
 qam4 = qam_mod(input,4); %Modulating the signal without noise (4-QAM)
-qam4Noise1 = awgn(qam4,snr1); %Adding noise to the modulated signal
-qam4Noise2 = awgn(qam4,snr2);
+qam4Noise1 = awgn(qam4,snr1,'measured'); %Adding noise to the modulated signal
+qam4Noise2 = awgn(qam4,snr2,'measured');
 scatterplot(qam4,1,0,'g+'); %Scatterplot of the signal without noise
 scatterplot(qam4Noise1,1,0,'g+'); %Scatterplot of the signal with noise
 scatterplot(qam4Noise2,1,0,'g+'); %Scatterplot of the signal with noise
@@ -48,8 +48,8 @@ fprintf(1,"BER for 16-QAM and SNR of %d = %f%%\n",snr2,100*ber42);
 
 %% 32-QAM
 qam5 = qam_mod(input,5); %Modulating the signal without noise (4-QAM)
-qam5Noise1 = awgn(qam5,snr1); %Adding noise to the modulated signal
-qam5Noise2 = awgn(qam5,snr2);
+qam5Noise1 = awgn(qam5,snr1,'measured'); %Adding noise to the modulated signal
+qam5Noise2 = awgn(qam5,snr2,'measured');
 scatterplot(qam5,1,0,'m+'); %Scatterplot of the signal without noise
 scatterplot(qam5Noise1,1,0,'m+'); %Scatterplot of the signal with noise
 scatterplot(qam5Noise2,1,0,'m+'); %Scatterplot of the signal with noise
@@ -62,8 +62,8 @@ fprintf(1,"BER for 32-QAM and SNR of %d = %f%%\n",snr2,100*ber52);
 
 %% 64-QAM
 qam6 = qam_mod(input,6); %Modulating the signal without noise (4-QAM)
-qam6Noise1 = awgn(qam6,snr1); %Adding noise to the modulated signal
-qam6Noise2 = awgn(qam6,snr2);
+qam6Noise1 = awgn(qam6,snr1,'measured'); %Adding noise to the modulated signal
+qam6Noise2 = awgn(qam6,snr2,'measured');
 scatterplot(qam6,1,0,'r+'); %Scatterplot of the signal without noise
 scatterplot(qam6Noise1,1,0,'r+'); %Scatterplot of the signal with noise
 scatterplot(qam6Noise2,1,0,'r+'); %Scatterplot of the signal with noise
