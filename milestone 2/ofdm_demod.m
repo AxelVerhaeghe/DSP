@@ -7,7 +7,7 @@ function y = ofdm_demod(signal,qamBlockSize,prefixLength, paddingSize,channel)
     withoutPrefix = fft(withoutPrefixTime); %convert to frequency domain
     
     channelFreq = fft(channel,frameSize-prefixLength); %Convert channel response to frequency domain
-    withoutPrefixScaled = withoutPrefix./transpose(channelFreq); %Compensate for channel
+    withoutPrefixScaled = withoutPrefix./channelFreq; %Compensate for channel
     
     qamParallel = withoutPrefixScaled(2:qamBlockSize+1,:); %Remove complex conjugate
     y = reshape(qamParallel,1,[]); %Serialize

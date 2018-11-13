@@ -11,12 +11,12 @@ small = true;
 while small
     if out(i) > threshold
         small = false;
-        y = out(i-50:i+size(u,2)+200);
+        y = out(i-50:i+length(u)+200);
     end
     i = i + 1;
 end
 % creating toeplitz matrix
-c = [u,zeros(1,(size(y,1)-size(u,2)))];
+c = [u,zeros(1,(length(y)-length(u)))];
 r = [u(1),zeros(1,449)];
 X = toeplitz(c,r);
 
