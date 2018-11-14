@@ -2,7 +2,7 @@
 
 clear();
 n = 6;
-qamBlockSize = 500;
+frameSize = 500;
 snr = 20;
 channel = load('IR2.mat');
 channelImpulseResponse = channel.h;
@@ -18,8 +18,8 @@ fs = 16000;
 qamStream = qam_mod(bitStream,n);
 
 % OFDM modulation
-[ofdmStream,paddingSize] = ofdm_mod(qamStream,qamBlockSize,prefixLength);
-[ofdmStreamOnOff,paddingSizeOnOff,usableFrequencies] = ofdm_mod_onoff(qamStream,qamBlockSize,prefixLength,channelFrequencyResponse);
+[ofdmStream,paddingSize] = ofdm_mod(qamStream,frameSize,prefixLength);
+[ofdmStreamOnOff,paddingSizeOnOff,usableFrequencies] = ofdm_mod_onoff(qamStream,frameSize,prefixLength,channelFrequencyResponse);
 ofdmStreamWithNoise = awgn(ofdmStream,snr,'measured');
 ofdmStreamWithNoiseOnOff = awgn(ofdmStreamOnOff,snr,'measured');
 
@@ -31,13 +31,13 @@ for i=1:channelOrder
 end
 
 afterChannelRandom1 = fftfilt(ht1,ofdmStreamWithNoise);
-afterChannelAcousticOnOff = fftfilt(channelImpulseResponse,ofdmStreamWithNoise);
+afterChannelAcousticOnOff = fftfilt(channelImpulseResponse,ofdmStreamWithNoiseOnOff);
 afterChannelAcoustic = fftfilt(channelImpulseResponse,ofdmStreamWithNoise);
 
 % OFDM demodulation
-rxQamStreamRandom1 = ofdm_demod(afterChannelRandom1,qamBlockSize,prefixLength,paddingSize,ht1);
-rxQamStreamAcousticOnOff = ofdm_demod_onoff(afterChannelAcousticOnOff,qamBlockSize,prefixLength,paddingSize,channelImpulseResponse,usableFrequencies);
-rxQamStreamAcoustic = ofdm_demod(afterChannelAcoustic,qamBlockSize,prefixLength,paddingSize,channelImpulseResponse);
+rxQamStreamRandom1 = ofdm_demod(afterChannelRandom1,frameSize,prefixLength,paddingSize,ht1);
+rxQamStreamAcousticOnOff = ofdm_demod_onoff(afterChannelAcousticOnOff,frameSize,prefixLength,paddingSizeOnOff,channelImpulseResponse,usableFrequencies);
+rxQamStreamAcoustic = ofdm_demod(afterChannelAcoustic,frameSize,prefixLength,paddingSize,channelImpulseResponse);
 
 % QAM demodulation
 rxBitStreamRandom1 = qam_demod(rxQamStreamRandom1,n);
@@ -64,4 +64,4 @@ figure();
 subplot(2,2,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
 subplot(2,2,2); colormap(colorMap); image(imageRxRandom1); axis image; title('Received image (Random Channel 1)'); drawnow;
 subplot(2,2,3); colormap(colorMap); image(imageRxAcousticOnOff); axis image; title('Received image (Acoustic Channel (on/off keying))'); drawnow;
-subplot(2,2,4); colormap(colorMap); image(imageRxAcoustic); axis image; title('Received image (Acoustic Channel (IR2))'); drawnow;
+subplot(2,2,4); colormap(colorMap); image(imageRxAcoustic); axis image; title('Received image (Acoustic Channel)'); drawnow;

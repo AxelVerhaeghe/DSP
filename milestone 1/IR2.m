@@ -11,7 +11,11 @@ small = true;
 while small
     if out(i) > threshold
         small = false;
-        y = out(i-50:i+length(u)+200);
+        if i+length(u)+200 > length(out)
+            y = out(length(out)-250-length(u):length(out));
+        else
+            y = out(i-50:i+length(u)+200);
+        end
     end
     i = i + 1;
 end
@@ -25,14 +29,16 @@ h = X\y;
 H = fft(h);
 magH = mag2db(abs(H));
 save('IR2.mat','h');
+magHPos = magH(round(length(magH)/2):length(magH));
+f = linspace(0,fs/2,length(magHPos));
 
 figure();
-subplot(2,1,1) %% plot of time domain impulse response
+subplot(2,1,1) % plot of time domain impulse response
 plot(h);
 title('Time domain IR');
 xlabel('Samples');
 
-subplot(2,1,2) %% plot of frequency response
-plot(magH);
+subplot(2,1,2) % plot of frequency response
+plot(f,magHPos);
 title('Frequency domain IR');
 xlabel('Frequency (Hz)');
