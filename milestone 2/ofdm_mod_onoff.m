@@ -20,7 +20,7 @@ function [ofdm,paddingSize,usableFrequencies] = ofdm_mod_onoff(qamSignal,qamBloc
     
     nbUsableFrequencies = qamBlockSize + 1; %initialising nbUsableFrequencies to be greater than qamBlockSize
     tol = 0.5;
-    while (nbUsableFrequencies > qamBlockSize)
+    while ((nbUsableFrequencies > qamBlockSize) && (tol <= 1))
         usableFrequencies = find(absFrequency>tol*maxFrequency);  
         nbUsableFrequencies = length(usableFrequencies);
         tol = tol + 0.1;
@@ -38,7 +38,7 @@ function [ofdm,paddingSize,usableFrequencies] = ofdm_mod_onoff(qamSignal,qamBloc
     paddedSignalLength = length(paddedQamSignal);
     numFrames = paddedSignalLength/nbUsableFrequencies;
     
-    parallel = reshape(paddedQamSignal,qamBlockSize,numFrames);
+    parallel = reshape(paddedQamSignal,nbUsableFrequencies,numFrames);
     frames = zeros(qamBlockSize,numFrames);
     for i=1:nbUsableFrequencies
        frames(usableFrequencies(i),:) =  parallel(i,:);
