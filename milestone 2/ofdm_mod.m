@@ -1,28 +1,28 @@
 function [ofdm,paddingSize] = ofdm_mod(qamSignal,frameSize,prefixLength)
 %OFDM_MOD applies a OFDM to the given QAM input signal.
-%Input arguments:
-% - qamSignal    The input signal modulated with QAM
-% - dftSize      The size of the DFT
-% - L            The length of the cyclic prefix
+%INPUT:
+% - qamSignal:      The input signal modulated with QAM
+% - frameSize:      The size of the DFT
+% - prefixLength:   The length of the cyclic prefix
+%OUTPUT:
+% - ofdm:           OFDM modulated version of the input stream
+% - paddingSize:    The amount of zeros added to the QAM signal to make it
+%                   divisible into packets of length frameSize
 
     qamSignal = transpose(qamSignal);
     signalLength   = length(qamSignal);
-    frameLength  = 2*frameSize+2;
-    paddingSize = 0;
-    
+    frameLength  = 2*frameSize+2;    
     % padding input with zeros
     remainder = mod(signalLength,frameSize);
-    while(remainder ~= 0)
-       qamSignal = cat(2,qamSignal,0);
-       signalLength = signalLength + 1;
-       remainder = mod(signalLength,frameSize);
-       paddingSize = paddingSize + 1;
+    if remainder == 0
+        remainder = frameSize;
     end
-    numFrames = signalLength/frameSize;
-%     paddedQamSignal = zeros(1,numFrames*dftSize);
-%     paddedQamSignal(1:length(qamSignal)) = qamSignal;
+    paddingSize = frameSize - remainder;
+    padding = zeros(1,paddingSize);
+    paddedQamSignal = [qamSignal,padding];
+    numFrames = length(paddedQamSignal)/frameSize;
     
-    parallel = reshape(qamSignal,frameSize,numFrames);
+    parallel = reshape(paddedQamSignal,frameSize,numFrames);
     without_pre = [zeros(1,numFrames);parallel;zeros(1,numFrames);flipud(conj(parallel))];
     without_pre_time = ifft(without_pre); %apply ifft
     ofdm = [without_pre_time(frameLength-prefixLength+1:frameLength,:);without_pre_time]; %add cyclic prefix of length L

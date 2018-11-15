@@ -1,11 +1,13 @@
 function [ofdm,paddingSize,usableFrequencies] = ofdm_mod_onoff(qamSignal,frameSize,prefixLength,channelFrequencyResponse)
 %OFDM_MOD_ONOFF applies a OFDM to the given QAM input signal by
 %only using the frequencies that are the least surpressed in the channel.
+%
 %INPUT:
 % - qamSignal:                  The input signal modulated with QAM
 % - frameSize:                  The size of the blocks of data
 % - prefixLength:               The length of the cyclic prefix
 % - channelFrequencyResponse:   The frequency response of the channel
+%
 %OUTPUT:
 % - ofdm:                       The ofdm modulated signal
 % - paddingSize:                If the signal is not divisible by qamBlocksize, the
