@@ -8,9 +8,9 @@ function [outputQamStream,H] = ofdm_demod(signal,frameSize,prefixLength, padding
     withoutPrefixTime = withPrefixTime(prefixLength+1:dftSize,:); %Removing prefix
     withoutPrefix = fft(withoutPrefixTime); %convert to frequency domain
     
-    train = ofdm_mod(repmat(trainblock,100,1),frameSize,prefixLength);
-    h = zeros(dftSize/2-1,1);
-    for i=2:dftSize/2-1
+    train = repmat(trainblock,100,1);
+    h = zeros(frameSize,1);
+    for i=2:frameSize
        h(i-1) = withoutPrefix(i)/train(i-1); 
     end
     H = [0;h;0;flipud(conj(h))];
