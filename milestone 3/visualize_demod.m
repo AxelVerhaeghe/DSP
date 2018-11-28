@@ -1,5 +1,6 @@
 clear();
 transmit_pic;
+pause;
 figure();
 subplot(2,2,2); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
 
