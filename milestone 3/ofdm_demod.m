@@ -24,7 +24,7 @@ function [outputQamStream,H] = ofdm_demod(signal,frameSize,prefixLength, padding
         
     h = zeros(frameSize,1);
     for i=1:frameSize
-       h(i) = withoutPrefix(i+1)/trainblock(i); 
+       h(i) = mean(withoutPrefix(i+1,:))/trainblock(i); 
     end
     H = [0;h;0;flipud(conj(h))];
     withoutPrefixScaled = withoutPrefix./H; %Compensate for channel

@@ -9,20 +9,19 @@ trainblock = qam_mod(input,n);
 qamSignal = repmat(trainblock,100,1); %repeating trainblock 100 times
 [Tx,paddingSize] = ofdm_mod(qamSignal,N/2-1,500);
 
-% freq = 300;
-% t = 0:1/fs:0.25;
-% pulse = 4*sin(2*pi*freq*t);
-% % pulse = wgn(1,0.25*fs,1);
-% [simin, nbsecs, fs] = initparams( Tx, fs, pulse);
-% sim('recplay');
-% out = simout.signals.values;
-% Rx = alignIO(out,pulse);
+freq = 300;
+t = 0:1/fs:0.25;
+pulse = 4*sin(2*pi*freq*t);
+% pulse = wgn(1,0.25*fs,1);
+[simin, nbsecs, fs] = initparams( Tx, fs, pulse);
+sim('recplay');
+out = simout.signals.values;
+Rx = alignIO(out,pulse);
 
-channel = load('IR2.mat');
-h = channel.h;
-H = channel.magH;
-Rx = conv(Tx,h);
-Rx = awgn(Rx,10,'measured');
+% channel = load('IR2.mat');
+% h = channel.h;
+% H = channel.magH;
+% Rx = conv(Tx,h);
 
 [output,channelEst] = ofdm_demod(Rx,N/2-1,500,paddingSize,trainblock);
 output = output(1:length(trainblock));
