@@ -1,13 +1,14 @@
 clear();
 N = 512;
-n = 6;
+n = 3;
 len = (N/2-1)*n;
 fs = 16000;
+prefixLength = 500;
 
 input = transpose(randi([0,1],1,len));
 trainblock = qam_mod(input,n);
 qamSignal = repmat(trainblock,100,1); %repeating trainblock 100 times
-[Tx,paddingSize] = ofdm_mod(qamSignal,N/2-1,500);
+[Tx,paddingSize] = ofdm_mod(qamSignal,N/2-1,prefixLength);
 
 freq = 300;
 t = 0:1/fs:0.25;
@@ -23,7 +24,7 @@ Rx = alignIO(out,pulse);
 % H = channel.magH;
 % Rx = conv(Tx,h);
 
-[output,channelEst] = ofdm_demod(Rx,N/2-1,500,paddingSize,trainblock);
+[output,channelEst] = ofdm_demod(Rx,N/2-1,prefixLength,paddingSize,trainblock);
 output = output(1:length(trainblock));
 outputBitstream = transpose(qam_demod(output,n));
 bitErrorRate = ber(input,outputBitstream);
