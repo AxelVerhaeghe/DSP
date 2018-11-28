@@ -3,13 +3,11 @@ function [outputQamStream,H] = ofdm_demod(signal,frameSize,prefixLength, padding
 %estimates the channel response.
 %
 %INPUT:
-% - signal:             The OFDM-modulated signal
-% - frameSize:          The size of the frames containing data
-% - prefixLength:       The length of the prefix added during the OFDM
-%                       modulation
-% - paddingSize:        The amount of zeros added during the OFDM
-%                       modulation
-% - trainblock:         The bitstream used for channel estimation
+% - signal:
+% - frameSize:
+% - prefixLength:
+% - paddingSize:
+% - trainblock:         The bitstream 
 %
 %OUTPUT:
 % - outputQamStream:    The demodulated signal
