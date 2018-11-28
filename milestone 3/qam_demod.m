@@ -3,6 +3,6 @@ function y = qam_demod(signal,n)
     nbRows = length(signal);
     demodSig = qamdemod(signal,M,'UnitAveragePower',true);
     binDemodSig = de2bi(demodSig);
-    y = reshape(binDemodSig,1,nbRows*n);
+    y = reshape(binDemodSig,nbRows*n,1);
     
 end

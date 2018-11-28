@@ -18,19 +18,19 @@ function [outputQamStream,channelEst] = ofdm_demod(signal,frameSize,prefixLength
 % - H:                  The channel frequencyresponse
 
     dftSize = 2*frameSize + 2 + prefixLength;
-    remainder = mod(length(signal),dftSize);
+    remainder = mod(length(signal),(Lt+Ld));
     tempSignal = signal(1:length(signal)-remainder);
     divisible = false;
     while divisible == false
-       numFrames = length(tempSignal)/dftSize;
-       remainder = mod(numFrames,(Lt+Ld));
+       remainder = mod(length(tempSignal),dftSize);
        if remainder == 0
            divisible = true;
        else
-           tempSignal = tempSignal(1:length(tempSignal)-dftSize);
+           tempSignal = tempSignal(1:length(tempSignal)-(Lt+Ld));
        end
     end
     
+    numFrames = length(tempSignal)/dftSize;
     numBlocks = numFrames/(Lt+Ld);
     
     withPrefixTime = reshape(tempSignal,dftSize,numFrames); %series to parallel
@@ -38,8 +38,8 @@ function [outputQamStream,channelEst] = ofdm_demod(signal,frameSize,prefixLength
     withoutPrefix = fft(withoutPrefixTime); %convert to frequency domain
     
     h = zeros(frameSize,numBlocks);
-    temp = zeros(2*frameSize+2,numBlocks*Ld);
-    channelEst = zeros(2*frameSize+2,numBlocks);
+    temp = zeros(,numBlocks*Ld);
+    channelEst = zeros(2*frameSize+2,numBlocks*Ld);
     for i=1:numBlocks
         for j=1:frameSize
            h(j,i) = mean(withoutPrefix(j+1,(i-1)*(Lt+Ld)+1:(i-1)*(Lt+Ld)+Lt))/trainblock(j); 

@@ -30,15 +30,13 @@ function [ofdm,paddingSize] = ofdm_mod(qamSignal,frameSize,prefixLength, trainbl
     trainblock = reshape(trainblock,[],1);
     
     numDataBlocks = numFrames/Ld;
-    temp = zeros(frameSize,numDataBlocks*(Lt+Ld));
-    for i = 1:numDataBlocks
-        for j = 1:Lt
-            temp(:,(i-1)*(Lt+Ld)+j) = trainblock;
-        end
+    temp = zeros(dftSize,numDataBlocks*(Lt+Ld));
+    for i=1:numDataBlocks
+        temp(:,(i-1)*(Lt+Ld)+1:(i-1)*(Lt+Ld)+Lt) = trainblock;
         temp(:,(i-1)*(Lt+Ld)+Lt+1:i*(Lt+Ld)) = parallel(:,(i-1)*Ld + 1:i*Ld);
     end
         
-    without_pre = [zeros(1,numFrames + Lt*numDataBlocks);temp;zeros(1,numFrames + Lt*numDataBlocks);flipud(conj(temp))];
+    without_pre = [zeros(1,numFrames);temp;zeros(1,numFrames);flipud(conj(parallel))];
     without_pre_time = ifft(without_pre); %apply ifft
     ofdm = [without_pre_time(dftSize-prefixLength+1:dftSize,:);without_pre_time]; %add cyclic prefix of length L
     ofdm = ofdm(:).'; %reshapes the array into a column vector and then applies transpose

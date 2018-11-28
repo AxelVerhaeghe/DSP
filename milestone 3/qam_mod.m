@@ -7,7 +7,7 @@ function dataOut = qam_mod(dataIn,n)
 %
 %OUTPUT:
 % - dataOut:    The QAM-modulated signal
-   
+    dataIn = reshape(dataIn,[],1);
     M = 2^n;
     dataLength = length(dataIn);
     % Padding input with zeros
