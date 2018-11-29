@@ -1,4 +1,3 @@
-clear();
 transmit_pic;
 pause;
 figure();

@@ -15,7 +15,7 @@ function [outputQamStream,channelEst] = ofdm_demod(signal,frameSize,prefixLength
 %
 %OUTPUT:
 % - outputQamStream:    The demodulated signal
-% - H:                  The channel frequencyresponse
+% - channelEst:                  The channel frequencyresponse
 
     dftSize = 2*frameSize + 2 + prefixLength;
     remainder = mod(length(signal),dftSize);

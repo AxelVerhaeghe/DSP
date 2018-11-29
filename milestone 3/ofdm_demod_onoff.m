@@ -1,4 +1,4 @@
-function [outputQamStream,channelEst] = ofdm_demod(signal,frameSize,prefixLength,paddingSize,trainblock,Lt,Ld)
+function [outputQamStream,channelEst] = ofdm_demod_onoff(signal,frameSize,prefixLength,paddingSize,usableFreqs,trainblock,Lt,Ld)
 %OFDM_DEMOD demodulates the input OFDM signal back to a QAM signal and
 %estimates the channel response.
 %
@@ -9,28 +9,30 @@ function [outputQamStream,channelEst] = ofdm_demod(signal,frameSize,prefixLength
 %                       modulation
 % - paddingSize:        The amount of zeros added during the OFDM
 %                       modulation
+% - usableFreqs:        List of frequencies where SNR is high enough
 % - trainblock:         The bitstream used for channel estimation
 % - Lt:                 Amount of training packets per block
 % - Ld:                 Amount of datapackets per block
 %
 %OUTPUT:
 % - outputQamStream:    The demodulated signal
-% - H:                  The channel frequencyresponse
+% - channelEst:         The channel frequencyresponse
 
+    nbUsableFreqs = length(usableFreqs);
     dftSize = 2*frameSize + 2 + prefixLength;
-    remainder = mod(length(signal),(Lt+Ld));
+    remainder = mod(length(signal),dftSize);
     tempSignal = signal(1:length(signal)-remainder);
     divisible = false;
     while divisible == false
-       remainder = mod(length(tempSignal),dftSize);
+       numFrames = length(tempSignal)/dftSize;
+       remainder = mod(numFrames,(Lt+Ld));
        if remainder == 0
            divisible = true;
        else
-           tempSignal = tempSignal(1:length(tempSignal)-(Lt+Ld));
+           tempSignal = tempSignal(1:length(tempSignal)-dftSize);
        end
     end
     
-    numFrames = length(tempSignal)/dftSize;
     numBlocks = numFrames/(Lt+Ld);
     
     withPrefixTime = reshape(tempSignal,dftSize,numFrames); %series to parallel
@@ -38,8 +40,8 @@ function [outputQamStream,channelEst] = ofdm_demod(signal,frameSize,prefixLength
     withoutPrefix = fft(withoutPrefixTime); %convert to frequency domain
     
     h = zeros(frameSize,numBlocks);
-    temp = zeros(,numBlocks*Ld);
-    channelEst = zeros(2*frameSize+2,numBlocks*Ld);
+    temp = zeros(2*frameSize+2,numBlocks*Ld);
+    channelEst = zeros(2*frameSize+2,numBlocks);
     for i=1:numBlocks
         for j=1:frameSize
            h(j,i) = mean(withoutPrefix(j+1,(i-1)*(Lt+Ld)+1:(i-1)*(Lt+Ld)+Lt))/trainblock(j); 
@@ -49,6 +51,10 @@ function [outputQamStream,channelEst] = ofdm_demod(signal,frameSize,prefixLength
     end
 
     qamParallel = temp(2:frameSize+1,:); %Remove complex conjugate
-    outputQamStream = reshape(qamParallel,1,[]); %Serialize
+    usefulData = zeros(nbUsableFreqs,numBlocks*Ld);
+    for k = 1:nbUsableFreqs
+        usefulData(k,:) = qamParallel(usableFreqs(k),:);
+    end
+    outputQamStream = reshape(usefulData,1,[]); %Serialize
     outputQamStream = outputQamStream(1:length(outputQamStream)-paddingSize); %Remove padding
 end

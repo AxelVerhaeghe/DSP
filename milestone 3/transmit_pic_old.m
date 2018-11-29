@@ -1,12 +1,12 @@
 clear();
 
 N = 512;
-n = 4;
+n = 2;
 len = (N/2-1)*n;
 fs = 16000;
 prefixLength = 500;
 Lt = 5;
-Ld = 15;
+Ld = 25;
 
 trainBlockBits = randi([0,1],1,len);
 trainblock = qam_mod(trainBlockBits,n);
@@ -42,24 +42,5 @@ bitErrorRate = ber(bitStream, rxBitStream);
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 
 % Plot images
-figure();
-subplot(2,2,2); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
-
-x = channelEst(1:length(channelEst)/2,:);
-[~,numBlocks] = size(channelEst);
-lenBlocks = floor(length(rxBitStream)/numBlocks);
-timeMax = max(ifft(channelEst));
-timeMin = min(ifft(channelEst));
-freqMax = max(20*log10(abs(x)));
-freqMin = min(20*log10(abs(x)));
-
-for i = 1:numBlocks
-    tempBitStream = rxBitStream(1:i*lenBlocks);
-    tempImageRx = bitstreamtoimage(tempBitStream, imageSize, bitsPerPixel);
-    subplot(2,2,1); plot(ifft(channelEst(:,i))); title('Impulse response'); ylim([-0.2,0.2]);
-    
-    subplot(2,2,3); plot(20*log10(abs(x(:,i)))); title('Frequency response'); ylim([-60,0]);
-    subplot(2,2,4); colormap(colorMap); image(tempImageRx); axis image; title('Received image'); drawnow;
-    pause((Lt+Ld)*N/fs);
-end
-subplot(2,2,2); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
+subplot(1,2,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
+subplot(1,2,2); colormap(colorMap); image(imageRx); axis image; title('Received image'); drawnow;

@@ -12,7 +12,7 @@ function [ofdm,paddingSize] = ofdm_mod(qamSignal,frameSize,prefixLength, trainbl
 % - paddingSize:    The amount of zeros added to the QAM signal to make it
 %                   divisible into packets of length frameSize
 
-    qamSignal = transpose(qamSignal);
+    qamSignal = reshape(qamSignal,1,[]);
     signalLength   = length(qamSignal);
     dftSize  = 2*frameSize+2;    
     % padding input with zeros
