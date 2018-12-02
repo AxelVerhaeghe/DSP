@@ -11,11 +11,11 @@ Yk = fftfilt(Hk,Xk);
 delta = 0.001*Hk;
 mu = 0.4; %stepSize: greater stepsize increases speed of convergence (too big causes oscilations)
 alpha = 0.5;
-channelLength = 100;
-Wk = zeros(1,channelLength);
+convergenceTime = 100;
+Wk = zeros(1,convergenceTime);
 Wk(1) = 1/conj(Hk) + delta;
 
-for L = 1:channelLength
+for L = 1:convergenceTime
    Wk(L+1) = Wk(L) + mu/(alpha + conj(Yk(L+1))*Yk(L+1)) * Yk(L+1) * conj(Xk(L+1) - conj(Wk(L))*Yk(L+1));
 end
 
