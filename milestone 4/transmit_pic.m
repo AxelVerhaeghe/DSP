@@ -2,12 +2,11 @@
 clear();
 N = 512;
 frameSize = N/2-1;
-n = 3;
+n = 4;
 len = (N/2-1)*n;
 fs = 16000;
 prefixLength = 500;
 Lt = 5;
-Ld = 25;
 
 trainBlockBits = randi([0,1],1,len);
 trainblock = qam_mod(trainBlockBits,n);

@@ -1,4 +1,4 @@
-function [outputQamStream,Wk] = ofdm_demod(signal,frameSize,prefixLength,paddingSize,trainblock,Lt,n)
+function [outputQamStream,W] = ofdm_demod(signal,frameSize,prefixLength,paddingSize,trainblock,Lt,n)
 %OFDM_DEMOD demodulates the input OFDM signal back to a QAM signal and
 %estimates the channel response.
 %
@@ -19,32 +19,26 @@ function [outputQamStream,Wk] = ofdm_demod(signal,frameSize,prefixLength,padding
     dftSize = 2*frameSize + 2;
     remainder = mod(length(signal),(dftSize+prefixLength));
     roundedSignal = signal(1:end-remainder);
-    numFrames = length(roundedSignal)/(dftSize + prefixLength);
-    withPrefixTime = reshape(roundedSignal,dftSize + prefixLength,numFrames); %series to parallel
+    withPrefixTime = reshape(roundedSignal,dftSize + prefixLength,[]); %series to parallel
     withoutPrefixTime = withPrefixTime(prefixLength+1:end,:); %Removing prefix
     withoutPrefix = fft(withoutPrefixTime); %convert to frequency domain
     
     % Initial channel estimation
     h = zeros(frameSize,1);
-    temp = zeros(dftSize,numFrames-Lt);
     for j=1:frameSize
        h(j) = mean(withoutPrefix(j+1,1:Lt))/trainblock(j); 
     end
-    channelEst = [0;h;0;flipud(conj(h))];
-    
-    mu = 0.4;
+    qamParallel = withoutPrefix(2:frameSize+1,Lt+1:end); %Remove complex conjugate and training frames
+    [~,numDataFrames] = size(qamParallel);
+    temp = zeros(frameSize,numDataFrames);
+
+    mu = 0.9;
     alpha = 1;
-    Wk = zeros(dftSize,numFrames - Lt + 1);
-    Wk(:,1) = 1./conj(channelEst);    
-    for i =1:dftSize
-        for L = 1:numFrames-Lt
-           temp(i,L) = withoutPrefix(i,Lt+L)*conj(Wk(i,L));
-           Xk = qam_demod(withoutPrefix(i,L+1),n);
-           Xk = qam_mod(Xk,n);
-           Wk(i,L+1) = Wk(i,L) + mu/(alpha + conj(withoutPrefix(i,L+1))*withoutPrefix(i,L+1)) * withoutPrefix(i,L+1) * conj(Xk - conj(Wk(i,L))*withoutPrefix(i,L+1));
-        end
+    W = zeros(frameSize,numDataFrames);
+    Win = 1./conj(h);
+    for i=1:frameSize
+        [temp(i,:),W(i,:)] = DDequal(qamParallel(i,:),Win(i),n,mu,alpha);
     end
-    qamParallel = temp(2:frameSize+1,:); %Remove complex conjugate
-    outputQamStream = reshape(qamParallel,1,[]); %Serialize
+    outputQamStream = reshape(temp,1,[]); %Serialize
     outputQamStream = outputQamStream(1:length(outputQamStream)-paddingSize); %Remove padding
 end

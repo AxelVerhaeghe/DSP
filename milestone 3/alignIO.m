@@ -9,6 +9,6 @@ outSync = out(-lagDiff+1:end);
 
 pulseLength = length(pulse);
 
-outAligned = outSync(pulseLength-60:end);
+outAligned = outSync(pulseLength-20:end);
 end
 

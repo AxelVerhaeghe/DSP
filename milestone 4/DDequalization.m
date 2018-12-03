@@ -9,7 +9,7 @@ Hk = 3 + 2i;
 Yk = fftfilt(Hk,Xk);
 
 delta = 0.001*Hk;
-mu = 0.4; %stepSize: greater stepsize increases speed of convergence (too big causes oscilations)
+mu = 0.9; %stepSize: greater stepsize increases speed of convergence (too big causes oscilations)
 alpha = 0.5;
 convergenceTime = 100;
 Wk = zeros(1,convergenceTime);
