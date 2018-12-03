@@ -26,18 +26,17 @@ function [outputQamStream,Wk] = ofdm_demod(signal,frameSize,prefixLength,padding
     
     % Initial channel estimation
     h = zeros(frameSize,1);
-    temp = zeros(dftSize,numFrames);
+    temp = zeros(dftSize,numFrames-Lt);
     for j=1:frameSize
        h(j) = mean(withoutPrefix(j+1,1:Lt))/trainblock(j); 
     end
     channelEst = [0;h;0;flipud(conj(h))];
     
     mu = 0.4;
-    alpha = 0.5;
-    Wk = zeros(dftSize,numFrames+1);
-    Wk(:,1) = 1./conj(channelEst);
-    
-    for i =1:frameSize
+    alpha = 1;
+    Wk = zeros(dftSize,numFrames - Lt + 1);
+    Wk(:,1) = 1./conj(channelEst);    
+    for i =1:dftSize
         for L = 1:numFrames-Lt
            temp(i,L) = withoutPrefix(i,Lt+L)*conj(Wk(i,L));
            Xk = qam_demod(withoutPrefix(i,L+1),n);
