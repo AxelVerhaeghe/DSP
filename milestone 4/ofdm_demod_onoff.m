@@ -1,4 +1,4 @@
-function [outputQamStream,h] = ofdm_demod(signal,frameSize,prefixLength,paddingSize,trainblock,Lt,n)
+function [outputQamStream,W] = ofdm_demod_onoff(signal,frameSize,prefixLength,paddingSize,usableFreqs,trainblock,Lt,n)
 %OFDM_DEMOD demodulates the input OFDM signal back to a QAM signal and
 %estimates the channel response.
 %
@@ -9,6 +9,8 @@ function [outputQamStream,h] = ofdm_demod(signal,frameSize,prefixLength,paddingS
 %                       modulation
 % - paddingSize:        The amount of zeros added during the OFDM
 %                       modulation
+% - usableFreqs:        List of all the frequencies where SNR is
+%                       high enough
 % - trainblock:         The bitstream used for channel estimation
 % - Lt:                 Amount of training frames per block
 %
@@ -16,6 +18,7 @@ function [outputQamStream,h] = ofdm_demod(signal,frameSize,prefixLength,paddingS
 % - outputQamStream:    The demodulated signal
 % - channelEst:         The channel frequencyresponse
 
+    nbUsableFreqs = length(usableFreqs);
     dftSize = 2*frameSize + 2;
     remainder = mod(length(signal),(dftSize+prefixLength));
     roundedSignal = signal(1:end-remainder);
@@ -39,6 +42,10 @@ function [outputQamStream,h] = ofdm_demod(signal,frameSize,prefixLength,paddingS
     for i=1:frameSize
         [temp(i,:),W(i,:)] = DDequal(qamParallel(i,:),Win(i),n,mu,alpha);
     end
-    outputQamStream = reshape(temp,1,[]); %Serialize
+    usefulData = zeros(nbUsableFreqs,numDataFrames);
+    for k = 1:nbUsableFreqs
+       usefulData(k,:) = temp(usableFreqs(k),:); 
+    end
+    outputQamStream = reshape(usefulData,1,[]); %Serialize
     outputQamStream = outputQamStream(1:length(outputQamStream)-paddingSize); %Remove padding
 end

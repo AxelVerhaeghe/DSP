@@ -3,7 +3,7 @@ pause;
 figure();
 subplot(2,2,2); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
 
-x = channelEst(2:length(channelEst)/2,:);
+x = channelEst(2:length(channelEst)/2,:); 
 [~,numBlocks] = size(channelEst);
 lenBlocks = floor(length(rxBitStream)/numBlocks);
 timeMax = max(ifft(channelEst),[],'all');
@@ -18,6 +18,6 @@ for i = 1:numBlocks
     
     subplot(2,2,3); plot(20*log10(abs(x(:,i)))); title('Frequency response'); ylim([freqMin,freqMax]);
     subplot(2,2,4); colormap(colorMap); image(tempImageRx); axis image; title('Received image'); drawnow;
-    pause((Lt+Ld)*N/fs);
+    pause(N/fs);
 end
 subplot(2,2,2); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;

@@ -3,20 +3,20 @@ function [ofdm,paddingSize] = ofdm_mod_onoff(qamSignal,frameSize,prefixLength,us
 %only using the frequencies that are the least surpressed in the channel.
 %
 %INPUT:
-% - qamSignal:                  The input signal modulated with QAM
-% - frameSize:                  The size of the blocks of data
-% - prefixLength:               The length of the cyclic prefix
-% - usableFreqs:                List of all the frequencies where SNR is
-%                               high enough
-% - trainblock:                 Known bitstream used for channel estimation
-% - Lt:                         Amount of training packets per block
+% - qamSignal:      The input signal modulated with QAM
+% - frameSize:      The size of the blocks of data
+% - prefixLength:   The length of the cyclic prefix
+% - usableFreqs:    List of all the frequencies where SNR is
+%                   high enough
+% - trainblock:     Known bitstream used for channel estimation
+% - Lt:             Amount of training packets per block
 % - Ld:                         Amount of datapackets per block
 %
 %OUTPUT:
-% - ofdm:                       The ofdm modulated signal
-% - paddingSize:                If the signal is not divisible by qamBlocksize, the
-%                               signal will be padded with zeros. This parameter
-%                               gives the amount of zeros added.
+% - ofdm:           The ofdm modulated signal
+% - paddingSize:    If the signal is not divisible by qamBlocksize, the
+%                   signal will be padded with zeros. This parameter
+%                   gives the amount of zeros added.
 
     qamSignal = reshape(qamSignal,1,[]);
     nbUsableFreqs = length(usableFreqs);
