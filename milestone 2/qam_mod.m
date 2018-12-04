@@ -7,7 +7,7 @@ function dataOut = qam_mod(dataIn,n)
 %
 %OUTPUT:
 % - dataOut:    The QAM-modulated signal
-   
+    dataIn = reshape(dataIn,[],1);
     M = 2^n;
     dataLength = length(dataIn);
     % Padding input with zeros
@@ -19,14 +19,8 @@ function dataOut = qam_mod(dataIn,n)
     padding = zeros(paddingSize,1);
     paddedDataIn = [dataIn;padding];
     
-    dataInMatrix = reshape(paddedDataIn,[],n); %Grouping the input in tuples of size n
+    dataInMatrix = reshape(paddedDataIn,n,[]).'; %Grouping the input in tuples of size n
     dataSymbolsIn = bi2de(dataInMatrix); %Converting the tuples to decimals
-    
-    % Applying the modulation without normalizing to calculate the
-    % normalisation factor.
-%     yNotNormalized = qammod(dataSymbolsIn,M);
-%     avgPower = mean(abs(yNotNormalized).^2);
-%     fprintf(1,"Normalisation factor = %d\n",1/avgPower);
     
     % Applying the normalized modulation
     dataOut = qammod(dataSymbolsIn,M,'UnitAveragePower',true);
