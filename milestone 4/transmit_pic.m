@@ -1,12 +1,11 @@
 %% PREAMBLE
-N = 512;
-frameSize = N/2-1;
+dftSize = 512;
+frameSize = dftSize/2-1;
 n = 4;
-len = (N/2-1)*n;
+len = frameSize*n;
 fs = 16000;
-prefixLength = 500;
-Lt = 5;
-BWusage = 50;
+prefixLength = 200;
+Lt = 25;
 
 trainBlockBits = randi([0,1],1,len);
 trainblock = qam_mod(trainBlockBits,n);
@@ -23,7 +22,7 @@ out = simout.signals.values;
 Rx = alignIO(out,pulseChannelEst);
 [~,channel] = ofdm_demod(Rx(1:length(Tx)),frameSize,prefixLength,paddingSizeChannelEst,trainblock,100,n);
 
-nbUsableFreqs = floor((N/2-1)*BWusage/100);
+nbUsableFreqs = floor(frameSize*BWusage/100);
 [~,usableFreqs] = maxk(channel,nbUsableFreqs,'ComparisonMethod','abs');
 usableFreqs = sort(usableFreqs);
 
@@ -50,6 +49,7 @@ afterChannel = alignIO(out,pulse);
 %% DEMODULATION
 % OFDM demodulation
 [rxQamStream,channelEst] = ofdm_demod_onoff(afterChannel,frameSize,prefixLength,paddingSize,usableFreqs,trainblock,Lt,n);
+channelEst = 1./conj(channelEst);
 channelEst = [zeros(1,size(channelEst,2));channelEst;zeros(1,size(channelEst,2));flipud(conj(channelEst))];
 % QAM demodulation
 rxBitStream = qam_demod(rxQamStream,n);
@@ -62,5 +62,6 @@ fprintf("BER = %f%%\n",100*bitErrorRate);
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 
 % Plot images
+figure();
 subplot(1,2,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
 subplot(1,2,2); colormap(colorMap); image(imageRx); axis image; title('Received image'); drawnow;
